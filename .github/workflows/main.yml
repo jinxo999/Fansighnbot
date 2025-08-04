@@ -1,4 +1,4 @@
-name: Run Discord Fansign Bot
+name: run-bot
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Set up Python
@@ -24,25 +24,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Check image styles folder
-        run: |
-          if [ ! -d "images" ]; then
-            echo "❌ 'images' folder not found!"
-            exit 1
-          fi
-
-          for style in style1.png style2.png style3.png style4.png style5.png; do
-            if [ ! -f "images/$style" ]; then
-              echo "❌ Missing file: images/$style"
-              exit 1
-            fi
-          done
-
-          echo "✅ All style images found."
-
-      - name: Run the bot
+      - name: Run bot
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-        run: |
-          python main.py
-          
+        run: python main.py
+        
