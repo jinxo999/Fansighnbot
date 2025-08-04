@@ -1,46 +1,38 @@
-import os
 import discord
-from discord import app_commands
 from discord.ext import commands
-from discord.ui import Select, View
+from discord import app_commands
+import os
 from dotenv import load_dotenv
 
+# Load .env (used by GitHub secret)
 load_dotenv()
-TOKEN = os.getenv("DISCORD_TOKEN")
 
+# Set up bot with slash command support
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="/", intents=intents)
-tree = app_commands.CommandTree(bot)
 
-class StyleDropdown(Select):
-    def __init__(self):
-        options = [
-            discord.SelectOption(label=f"Style {i}", value=f"{i}")
-            for i in range(1, 6)
-        ]
-        super().__init__(
-            placeholder="Choose your style",
-            min_values=1,
-            max_values=1,
-            options=options
-        )
-
-    async def callback(self, interaction: discord.Interaction):
-        style_number = self.values[0]
-        await interaction.response.send_message(f"You selected Style {style_number}!", ephemeral=True)
-
-class DropdownView(View):
-    def __init__(self):
-        super().__init__()
-        self.add_item(StyleDropdown())
-
-@tree.command(name="fansign", description="Pick a fansign style.")
-async def fansign(interaction: discord.Interaction):
-    await interaction.response.send_message("Choose your fansign style:", view=DropdownView(), ephemeral=True)
-
+# Fansign command using dropdown styles
 @bot.event
 async def on_ready():
-    await tree.sync()
-    print(f"✅ Logged in as {bot.user}!")
+    await bot.tree.sync()
+    print(f"Logged in as {bot.user} (ID: {bot.user.id})")
+    print("Bot is ready and slash commands are synced.")
 
-bot.run(TOKEN)
+@bot.tree.command(name="fansign", description="Send a fansign with a style")
+@app_commands.describe(style="Pick a style (1 to 5)")
+@app_commands.choices(style=[
+    app_commands.Choice(name="Style 1", value="1"),
+    app_commands.Choice(name="Style 2", value="2"),
+    app_commands.Choice(name="Style 3", value="3"),
+    app_commands.Choice(name="Style 4", value="4"),
+    app_commands.Choice(name="Style 5", value="5"),
+])
+async def fansign(interaction: discord.Interaction, style: app_commands.Choice[str]):
+    image_path = f"images/style{style.value}.png"
+    if os.path.exists(image_path):
+        await interaction.response.send_message(file=discord.File(image_path))
+    else:
+        await interaction.response.send_message(f"Style {style.value} image not found.", ephemeral=True)
+
+# Run the bot using the token from GitHub Secrets
+bot.run(os.getenv("DISCORD_TOKEN"))
