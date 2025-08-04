@@ -35,4 +35,4 @@ async def fansign(interaction: discord.Interaction, style: app_commands.Choice[s
         await interaction.response.send_message(f"Style {style.value} image not found.", ephemeral=True)
 
 # Run the bot using the token from GitHub Secrets
-bot.run(os.getenv("DISCORD_BOT_TOKEN"))
+bot.run(os.getenv("DISCORD_TOKEN"))
