@@ -1,9 +1,8 @@
-name: run-bot
+name: run-discord-bot
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -11,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Python
@@ -24,7 +23,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run bot
+      - name: Run Discord bot
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
         run: python main.py
