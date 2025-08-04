@@ -16,15 +16,18 @@ async def on_ready():
     except Exception as e:
         print(f'Error syncing commands: {e}')
 
-@bot.tree.command(name="fansign", description="Create a fansign with your name and selected style")
-@app_commands.describe(name="The name to put on the image", style="Choose a style from 1 to 5")
-@app_commands.choices(style=[
+# Define available styles
+style_choices = [
     app_commands.Choice(name="Style 1", value="style1.png"),
     app_commands.Choice(name="Style 2", value="style2.png"),
     app_commands.Choice(name="Style 3", value="style3.png"),
     app_commands.Choice(name="Style 4", value="style4.png"),
     app_commands.Choice(name="Style 5", value="style5.png"),
-])
+]
+
+@bot.tree.command(name="fansign", description="Create a fansign with your name and selected style")
+@app_commands.describe(name="The name to put on the image", style="Choose a style from 1 to 5")
+@app_commands.choices(style=style_choices)
 async def fansign(interaction: discord.Interaction, name: str, style: app_commands.Choice[str]):
     try:
         image_path = os.path.join("images", style.value)
