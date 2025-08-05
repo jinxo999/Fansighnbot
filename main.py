@@ -31,7 +31,7 @@ async def on_ready():
 async def fansign(interaction: discord.Interaction, style: app_commands.Choice[str], name: str = "Luster"):
     try:
         image_path = f"images/style{style.value}.png"
-        font_path = f"fonts/Arial.ttf"
+        font_path = f"Arial.ttf"
         
         # Check files
         if not os.path.exists(image_path):
